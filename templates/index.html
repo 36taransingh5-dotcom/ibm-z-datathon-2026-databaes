@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}New payment · Payment Shield{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">REAL-TIME PAYMENT PROTECTION</p>
+  <h1>Send money with a second set of eyes.</h1>
+  <p>Our model and transparent safety checks assess the payment before it leaves.</p>
+</section>
+
+<form class="card form-card" method="post" action="/assess">
+  <div class="section-title"><span>1</span><div><h2>Payment details</h2><p>Who are you paying and how much?</p></div></div>
+  <div class="grid two">
+    <label>Recipient name<input name="payee" value="Alex Morgan" required></label>
+    <label>Amount (£)<input name="amount" type="number" min="0.01" step="0.01" value="85" required></label>
+    <label>Your usual payment (£)<input name="usual_amount" type="number" min="0.01" step="0.01" value="75" required></label>
+    <label>Recipient age (hours)<input name="payee_age_hours" type="number" min="0" step="0.1" value="720" required></label>
+    <label>Current hour (0–23)<input name="hour" type="number" min="0" max="23" value="14" required></label>
+    <label>Typing / hesitation time (seconds)<input name="typing_time_seconds" type="number" min="0" step="0.1" value="8" required></label>
+  </div>
+  <div class="section-title compact"><span>2</span><div><h2>Safety context</h2><p>These signals help detect coercion and unusual behaviour.</p></div></div>
+  <div class="checks">
+    <label><input type="checkbox" name="new_payee"><span>New recipient</span></label>
+    <label><input type="checkbox" name="device_change"><span>Device recently changed</span></label>
+    <label><input type="checkbox" name="pasted_payee"><span>Recipient details pasted</span></label>
+    <label><input type="checkbox" name="on_call"><span>Someone is on the phone</span></label>
+  </div>
+  <button class="button primary" type="submit">Review payment</button>
+</form>
+{% endblock %}

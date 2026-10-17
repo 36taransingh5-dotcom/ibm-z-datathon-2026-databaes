@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Payment paused · Payment Shield{% endblock %}
+{% block content %}
+<section class="card decision warning">
+  <div class="status-icon">!</div>
+  <p class="eyebrow">PAYMENT PAUSED</p>
+  <h1>Take a moment before you pay.</h1>
+  <p class="reason">{{ assessment.reason }}</p>
+  <div class="risk-meter"><div style="width: {{ assessment.risk_score }}%"></div></div>
+  <div class="risk-row"><span>Risk score</span><strong>{{ assessment.risk_score }}/100</strong></div>
+  <dl>
+    <div><dt>Recipient</dt><dd>{{ payee }}</dd></div>
+    <div><dt>Amount</dt><dd>£{{ "%.2f"|format(payment.amount) }}</dd></div>
+    <div><dt>Reference</dt><dd>{{ entry_id }}</dd></div>
+  </dl>
+  <p class="guidance">If anyone told you to ignore a warning or move money to a “safe account”, cancel and contact your bank using a trusted number.</p>
+  <form class="actions" method="post" action="/decision/{{ entry_id }}">
+    <button class="button danger" name="action" value="cancel">Cancel payment</button>
+    <button class="button ghost" name="action" value="confirm">I understand, confirm</button>
+  </form>
+</section>
+{% endblock %}

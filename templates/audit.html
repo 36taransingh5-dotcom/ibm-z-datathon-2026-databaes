@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Audit log · Payment Shield{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">TRACEABLE BY DESIGN</p><h1>Decision audit log</h1><p>Every assessment and customer choice is recorded.</p></div><a class="button primary" href="/">New payment</a></section>
+<section class="card table-card">
+  <div class="table-wrap"><table>
+    <thead><tr><th>Time (UTC)</th><th>Recipient</th><th>Amount</th><th>Risk</th><th>Reason</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for entry in entries %}
+      <tr><td>{{ entry.created_at.replace('T', ' ') }}</td><td><strong>{{ entry.payee }}</strong><small>{{ entry.id }}</small></td><td>£{{ "%.2f"|format(entry.amount) }}</td><td><span class="risk {{ entry.risk_level }}">{{ entry.risk_score }}</span></td><td class="reason-cell">{{ entry.reason }}</td><td><span class="pill {{ entry.status }}">{{ entry.status }}</span></td></tr>
+    {% else %}
+      <tr><td class="empty" colspan="6">No payments assessed yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}

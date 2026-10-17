@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Payment {{ status }} · Payment Shield{% endblock %}
+{% block content %}
+<section class="card decision {{ 'success' if status in ['approved', 'confirmed'] else 'neutral' }}">
+  <div class="status-icon">{{ '✓' if status in ['approved', 'confirmed'] else '×' }}</div>
+  <p class="eyebrow">PAYMENT {{ status|upper }}</p>
+  <h1>
+    {% if status == 'approved' %}No strong scam pattern detected.
+    {% elif status == 'confirmed' %}You confirmed this payment.
+    {% else %}The payment was cancelled.{% endif %}
+  </h1>
+  <p>Recipient: <strong>{{ payee }}</strong> · Reference: {{ entry_id }}</p>
+  <div class="actions"><a class="button primary" href="/">Make another payment</a><a class="button ghost" href="/audit">View audit log</a></div>
+</section>
+{% endblock %}
