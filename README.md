@@ -1,2 +1,61 @@
-# ibm-z-datathon-2026-databaes
-IBM Z Datathon 2026 project by team databaes. Event code: SSF2026.
+# Payment Shield — real-time scam prevention demo
+
+Payment Shield is a simple end-to-end demonstration for the **IBM Z Datathon 2026** (event code **SSF2026**). It combines a gradient-boosting model with transparent safety rules to assess a bank payment before it is sent. Low-risk payments continue; high-risk payments pause with a plain-English explanation and explicit Confirm or Cancel choices. Every result is written to an audit log.
+
+> **Demo only:** This is not a production fraud system and must not be used to make real financial decisions.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Payment form] --> B[FastAPI]
+    B --> C[Safety rules]
+    B --> D[Gradient boosting model]
+    C --> E[Combined risk score]
+    D --> E
+    E -->|Low risk| F[Payment approved]
+    E -->|High risk| G[Pause + plain-English reason]
+    G --> H[Confirm or Cancel]
+    F --> I[(SQLite audit log)]
+    H --> I
+```
+
+## What is included
+
+- `generate_and_train.py` creates 50,000 synthetic payment records and trains the model.
+- `data/payments.csv` is the generated, labelled dataset.
+- `artifacts/payment_scam_model.joblib` is the trained scikit-learn model bundle.
+- `results.json` contains precision, recall, macro-F1 and median milliseconds per decision.
+- `risk_engine.py` combines the model probability with explainable rules.
+- `app.py` serves the payment flow and audit log on port 8000.
+
+## Run on LinuxONE
+
+```bash
+sudo apt-get install -y python3-venv python3-numpy python3-pandas python3-sklearn python3-joblib python3-fastapi python3-uvicorn python3-jinja2 python3-multipart python3-httpx python3-pytest
+python3 -m venv --system-site-packages .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 generate_and_train.py
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+Open `http://SERVER_ADDRESS:8000`. The health check is at `/health`, and the audit log is at `/audit`.
+
+To run the automated checks:
+
+```bash
+python3 -m pytest -q
+```
+
+## Synthetic dataset disclosure
+
+All payment records are **synthetic and clearly labelled**. No customer, banking or other personal data is used. The generator uses a fixed seed (`2026`) for reproducibility and creates an approximately 3% scam class. Scam examples are more likely—but not guaranteed—to include a new recipient, a newly created payee, an unusual amount or hour, a changed device, pasted details, hesitation and an active phone call. These are demonstration assumptions, not claims about real people.
+
+## Explainability and audit
+
+The final risk score blends the model probability with additive safety rules. When a payment is paused, the explanation is assembled from the highest-importance model features whose safety rules fired. The audit database records the score, reason and final user choice.
+
+## AI tools used
+
+This project was developed with AI-assisted coding using **Codex / Claude Code**. All generated code, data assumptions and model results should be reviewed by humans before reuse.
