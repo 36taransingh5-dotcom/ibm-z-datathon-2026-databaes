@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Databaes Pay</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.5 4 6v6c0 5 3.4 8.6 8 9.5 4.6-.9 8-4.5 8-9.5V6l-8-3.5Z"/>
+        <path d="m8.8 12 2.2 2.2 4.2-4.4"/>
+      </svg>
+    </span>
+    <span class="brand-text">Databaes<span class="brand-thin"> Pay</span></span>
+  </div>
+
+  <nav class="tabs" aria-label="Views">
+    <button class="tab is-active" data-view="pay" type="button" aria-current="page">Pay</button>
+    <button class="tab" data-view="audit" type="button">Audit log</button>
+  </nav>
+</header>
+
+<main class="shell">
+
+  <!-- ─────────────── Pay view ─────────────── -->
+  <section id="view-pay" class="view is-active" aria-labelledby="pay-title">
+
+    <!-- Step 1: the form -->
+    <div class="card" id="pane-form">
+      <div class="card-head">
+        <h1 id="pay-title">New payment</h1>
+        <p class="card-sub">Every payment is risk-checked before it leaves your account.</p>
+      </div>
+
+      <form id="payment-form" novalidate>
+        <div class="field">
+          <label for="amount">Amount</label>
+          <div class="amount-wrap">
+            <span class="currency" aria-hidden="true">£</span>
+            <input id="amount" name="amount" type="text" inputmode="decimal"
+                   placeholder="0.00" autocomplete="off" aria-describedby="amount-error">
+          </div>
+          <p class="field-error" id="amount-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="payee">Payee</label>
+          <input id="payee" name="payee" type="text" placeholder="Who are you paying?"
+                 autocomplete="off" maxlength="140" aria-describedby="payee-error">
+          <p class="field-error" id="payee-error" hidden></p>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-copy">
+            <span class="toggle-label">New payee</span>
+            <span class="toggle-hint">I have not paid this person or business before</span>
+          </div>
+          <label class="switch">
+            <input id="new-payee" type="checkbox">
+            <span class="switch-track" aria-hidden="true"><span class="switch-knob"></span></span>
+            <span class="sr-only">New payee</span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="submit-btn" type="submit">
+          <span class="btn-label">Review and pay</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Step 2a: low risk -->
+    <div class="card card-centred" id="pane-sent" hidden>
+      <div class="status-icon status-ok" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.5 4.5L19 7"/></svg>
+      </div>
+      <h1>Sent</h1>
+      <p class="status-sub" id="sent-summary"></p>
+      <dl class="receipt" id="sent-receipt"></dl>
+      <button class="btn btn-quiet btn-block" data-action="reset" type="button">Make another payment</button>
+    </div>
+
+    <!-- Step 2b: high risk -->
+    <div class="card card-flagged" id="pane-paused" hidden>
+      <div class="flag-head">
+        <div class="status-icon status-warn" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 8.5v5"/><path d="M12 17h.01"/>
+            <path d="M10.3 3.9 2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Hold on a moment</h1>
+          <p class="status-sub">We paused this payment for you to check.</p>
+        </div>
+      </div>
+
+      <dl class="receipt" id="paused-receipt"></dl>
+
+      <div class="risk-strip">
+        <span class="risk-label">Risk score</span>
+        <div class="risk-bar"><div class="risk-fill" id="risk-fill"></div></div>
+        <span class="risk-value" id="risk-value"></span>
+      </div>
+
+      <h2 class="reasons-title">Why this was flagged</h2>
+      <ul class="reasons" id="reasons-list"></ul>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" data-action="cancel" type="button">
+          <span class="btn-label">Cancel payment</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-danger" data-action="confirm" type="button">
+          <span class="btn-label">Confirm and send</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2c: cancelled -->
+    <div class="card card-centred" id="pane-cancelled" hidden>
+      <div class="status-icon status-neutral" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </div>
+      <h1>Payment cancelled</h1>
+      <p class="status-sub">Nothing left your account. The decision was recorded in the audit log.</p>
+      <button class="btn btn-quiet btn-block" data-action="reset" type="button">Back to payments</button>
+    </div>
+
+    <!-- Step 2d: request failed -->
+    <div class="card card-centred" id="pane-error" hidden>
+      <div class="status-icon status-error" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3.5 3.5 20.5 20.5"/><path d="M12 3a9 9 0 0 1 9 9 9 9 0 0 1-1.6 5.1"/>
+          <path d="M6.1 6.1A9 9 0 0 0 12 21a9 9 0 0 0 5.9-2.2"/>
+        </svg>
+      </div>
+      <h1 id="error-title">Can't reach the scoring service</h1>
+      <p class="status-sub" id="error-detail"></p>
+      <p class="error-base">Tried <code id="error-base"></code></p>
+      <div class="btn-row">
+        <button class="btn btn-quiet" data-action="reset" type="button">Back to form</button>
+        <button class="btn btn-primary" data-action="retry" type="button">
+          <span class="btn-label">Try again</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="error-tip">Backend not up yet? Turn on <strong>Mock mode</strong> below to demo the flow without it.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── Audit view ─────────────── -->
+  <section id="view-audit" class="view" aria-labelledby="audit-title">
+    <div class="card">
+      <div class="card-head card-head-row">
+        <div>
+          <h1 id="audit-title">Audit log</h1>
+          <p class="card-sub">Every scored payment and how it was resolved.</p>
+        </div>
+        <button class="btn btn-quiet btn-sm" id="audit-refresh" type="button">
+          <span class="btn-label">Refresh</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div id="audit-body">
+        <p class="audit-placeholder">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─────────────── Demo controls ─────────────── -->
+<footer class="devbar">
+  <div class="devbar-inner">
+    <label class="dev-toggle">
+      <input id="mock-mode" type="checkbox">
+      <span class="switch-track switch-track-sm" aria-hidden="true"><span class="switch-knob"></span></span>
+      <span class="dev-toggle-text">Mock mode</span>
+    </label>
+
+    <div class="dev-sep" aria-hidden="true"></div>
+
+    <label class="dev-select">
+      <span class="dev-select-label">API</span>
+      <select id="api-base"></select>
+    </label>
+
+    <span class="dev-status" id="api-status" data-state="unknown">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="api-status-text">not checked</span>
+    </span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
