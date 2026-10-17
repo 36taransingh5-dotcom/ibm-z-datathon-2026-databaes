@@ -1,0 +1,8 @@
+# Unpinned on purpose: pip picks the newest release with an s390x wheel/sdist on LinuxONE.
+fastapi
+uvicorn
+pydantic
+scikit-learn
+joblib
+pytest
+httpx
