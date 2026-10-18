@@ -7,4 +7,4 @@ The 8-slide pitch for our IBM Z Datathon 2026 entry: real-time payment scam prev
 
 Slides: problem, who it hurts, solution, demo, architecture, IBM Z usage, results, impact and next steps.
 
-Anything in [brackets] is a placeholder: fill in result numbers from the evaluation run on the LinuxONE VM, and keep the architecture slide matching the backend and the Mermaid diagram.
+All placeholders are filled. Scam statistics come from the UK Finance Annual Fraud Report 2026; model metrics come from `results.json` and were measured on synthetic data. The PDF for submission is `Databaes_IBM Z Datathon 2026 Project.pdf`.

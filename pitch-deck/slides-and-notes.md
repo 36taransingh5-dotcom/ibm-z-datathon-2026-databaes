@@ -1,8 +1,8 @@
-# Pitch deck: real-time payment scam prevention on IBM LinuxONE
+# Pitch deck: Payment Shield, real-time payment scam prevention on IBM LinuxONE
 
-IBM Z Datathon 2026 · Team Databaes
+IBM Z Datathon 2026 · Team Databaes · Event code SSF2026
 
-Anything in [brackets] is a placeholder to fill in before presenting.
+The slide text and speaker notes for our 8-slide pitch. All model metrics come from `results.json` and were measured on **synthetic data**.
 
 ---
 
@@ -10,19 +10,21 @@ Anything in [brackets] is a placeholder to fill in before presenting.
 
 **Payment scams trick people into sending the money themselves.**
 
-[Project name]: real-time payment scam prevention on IBM LinuxONE
+Payment Shield: real-time payment scam prevention on IBM LinuxONE
 
-- **[£___m]** lost to authorised push payment (APP) scams in the UK in [year]
-- **[___k]** APP scam cases reported in [year], each one approved by the victim
-- **Seconds** is all an instant payment takes to leave, and it rarely comes back
+- **£576.4m** lost to authorised push payment (APP) scams in the UK in 2025
+- **248,070** APP scam cases in 2025, each one approved by the victim
+- **17% → 28%:** scams that start with a call or text are 17% of cases but 28% of losses
+
+Source: UK Finance, Annual Fraud Report 2026
 
 **Speaker notes**
 
-Open with a 10-second story, not a statistic: “Imagine getting a call from your bank’s fraud team. They say your account is compromised and you need to move your savings to a safe account, now.” [Replace with a real, cited case if you have one.]
+Open with a 10-second story, not a statistic: “Imagine getting a call from your bank’s fraud team. They say your account is compromised and you need to move your savings to a safe account, now.”
 
 Then name the problem: this is an authorised push payment, or APP, scam. The bank’s security works perfectly. The customer logs in, passes every check and sends the money themselves, because someone has convinced them to.
 
-Fill the two figures from a cited source (UK Finance’s annual fraud report is the usual one) and say the source out loud. The third point is the key one for this project: instant payments settle in seconds, so prevention has to happen before the money moves, not after.
+Read the numbers and say the source out loud: in 2025, people in the UK lost £576.4 million to APP scams across 248,070 cases, according to UK Finance’s Annual Fraud Report 2026. The third figure is the link to our design: phone-led scams are only 17% of cases but 28% of the money lost. That is why Payment Shield looks at how someone is paying, such as being on a call, not just how much.
 
 Judging angle: community value and theme fit. Under 40 seconds.
 
@@ -39,9 +41,9 @@ Judging angle: community value and theme fit. Under 40 seconds.
 
 **Speaker notes**
 
-Scams are not a victimless back-office problem. They concentrate on people who are trusting, stressed or busy. Walk the four cards quickly, one line each. If you have a real anonymised quote or story, use it on one card.
+Scams are not a victimless back-office problem. They concentrate on people who are trusting, stressed or busy. Walk the four groups quickly, one line each.
 
-The banks card matters for the business case: in the UK, payment providers have had to reimburse most APP scam victims since October 2024 [check the current rules and limit before presenting]. Every scam stopped saves the bank money as well as saving a person from harm, which is why a bank would actually deploy this.
+The banks point matters for the business case: in the UK, payment providers have had to reimburse most APP scam victims since October 2024. Every scam stopped saves the bank money as well as saving a person from harm, which is why a bank would actually deploy this.
 
 Judging angle: community value. About 30 seconds.
 
@@ -51,21 +53,23 @@ Judging angle: community value. About 30 seconds.
 
 **Score every payment before the money moves**
 
-- **Low risk → Send:** the payment goes straight through and the customer sees “Sent”.
-- **High risk → Pause and explain:** the app stops and shows why in plain English, such as a new payee and an unusually large amount.
+- **Low risk → Approve:** the payment goes straight through and the customer sees “Payment approved”.
+- **High risk → Pause and explain:** the app stops and shows a risk score and why, such as a new payee while someone is on the phone.
 - **Customer decides → Confirm or cancel:** the customer stays in control of their own money, with a moment to think.
 
 Every score, reason and decision goes into an audit log, so analysts can see exactly what happened.
 
 **Speaker notes**
 
-One sentence pitch: [Project name] scores every outgoing payment in real time, in the moment between the customer pressing Send and the money leaving, and pauses only the risky ones.
+One sentence pitch: Payment Shield scores every outgoing payment in real time, in the moment between the customer pressing pay and the money leaving, and pauses only the risky ones.
 
-Why pause instead of block: blocking annoys genuine customers, and scam victims are often coached to push through. A pause with specific reasons, like “you’ve never paid this person before and this is far more than you usually send,” is the moment that breaks the scammer’s spell. The customer still decides, so we add a speed bump, not a wall.
+It combines a machine-learning model with transparent safety rules. It looks beyond the amount, at how the person is paying: are they on a call, did they paste the payee details, is this a payee added minutes ago, have they switched device?
+
+Why pause instead of block: blocking annoys genuine customers, and scam victims are often coached to push through. A pause with specific reasons is the moment that breaks the scammer’s spell. The customer still decides, so we add a speed bump, not a wall.
 
 The audit log matters for banks and regulators: every score, every reason shown and every confirm or cancel is recorded, so decisions can be reviewed and the data can later improve the model.
 
-Judging angle: novelty. Prevention before the payment leaves, with explainable friction and a human in the loop, not after-the-fact fraud detection. About 40 seconds.
+Judging angle: novelty. About 40 seconds.
 
 ---
 
@@ -73,24 +77,24 @@ Judging angle: novelty. Prevention before the payment leaves, with explainable f
 
 **Three payments, one audit trail**
 
-| Payment | What the model sees | Outcome |
+| Payment | What the system sees | Outcome |
 |---|---|---|
-| £650 rent to the usual landlord | Known payee, normal amount | “Sent” in [__] ms |
-| £4,800 to a new “safe account” | New payee, amount far above usual | Paused with reasons, customer cancels |
-| £[___] to a new tradesperson | New payee, [moderate] amount | Paused, customer confirms |
+| £650 rent to the usual landlord | Known payee, usual amount, daytime | Payment approved |
+| £2,400 to a new “safe account” | New payee, pasted details, on a call, nearly 4× usual | Paused with reasons, customer cancels |
+| £600 to a long-standing payee | Six times the usual amount, while on a call | Paused, customer confirms |
 
-Then open the audit log view · Backup recording: [link or QR code]
+Then open the audit log · Backup: the recorded demo video
 
 **Speaker notes**
 
-Run the live demo here, about 90 seconds, using the payment screen against POST /score.
+Run the live demo, about 90 seconds. It follows the same story as the video.
 
-1. “Here’s Sam paying rent to the same landlord as every month.” Leave New payee off and send. It shows “Sent”. Point out the speed: [__] ms.
-2. “Now Sam gets a call from ‘the bank’ telling them to move £4,800 to a safe account.” Turn New payee on and send. The pause screen appears with the risk score and plain-English reasons. Read one reason out loud, then press Cancel.
-3. “Not every new payee is a scam.” Pay a new tradesperson. If it pauses, press Confirm and it goes through. Pick an amount you’ve tested and know gives the outcome you want.
-4. Open the audit log view: all three payments are there with score, decision, reasons and the customer’s choice.
+1. “This is Priya paying her landlord £650 rent, like every month.” Known payee, usual amount. Press Review payment: “Payment approved”.
+2. “Now Priya gets a call from someone claiming to be her bank’s fraud team, telling her to move £2,400 to a safe account.” Tick New recipient, Recipient details pasted and Someone is on the phone. The pause screen shows the risk score and the reasons. Read one out loud, then press Cancel this payment.
+3. “Not every pause is a scam.” Pay £600 to a long-standing payee with a usual payment of £100, while on a call. It pauses, because a large payment during a call is a classic coercion pattern. Press Confirm and send anyway.
+4. Open the audit log: all three payments are there with score, decision, reason and the customer’s final choice.
 
-Rehearse with the real model loaded so the outcomes match the table. Have the backup recording ready in case the VM or Wi-Fi fails.
+Have the recorded video ready in case the VM or Wi-Fi fails.
 
 Judging angle: execution.
 
@@ -100,27 +104,27 @@ Judging angle: execution.
 
 **Scoring that sits inside the payment path**
 
-Payment in → Features → ML scoring → Explanation → Human confirm
+Payment in → Features → Rules + ML → Explanation → Human confirm
 
-- **Payment in:** payment screen sends amount and payee to POST /score (FastAPI)
-- **Features:** amount, new-payee flag and [other features] built from the request
-- **ML scoring:** trained model (model.pkl) gives a risk score and decision
-- **Explanation:** top risk factors turned into plain-English reasons
-- **Human confirm:** low risk is sent; high risk waits for Confirm or Cancel
+- **Payment in:** payment form posts to `POST /assess` on FastAPI, port 8000
+- **Features:** amount vs usual, new payee and its age, hour, device change, hesitation, pasted payee, on call
+- **Rules + ML:** gradient boosting model and red-flag rules, blended into a 0–100 score
+- **Explanation:** top 3 reasons, ranked by feature importance, in plain English
+- **Human confirm:** under 55 approved; 55 and over paused for Confirm or Cancel
 
-Every score, reason and choice is written to a SQLite audit log, served by GET /audit · all running on a LinuxONE VM
+Every score, reason and choice is written to a SQLite audit log, shown at `/audit` · all running on a LinuxONE VM
 
 **Speaker notes**
 
-Walk left to right, following one payment. This slide should match the Mermaid diagram in the architecture write-up exactly.
+Walk left to right, following one payment. This matches the diagram in `docs/ARCHITECTURE.md`.
 
-1. Payment in: the single-page payment screen (plain HTML and JavaScript) posts the payment as JSON to POST /score on the FastAPI backend.
-2. Features: [list the real features].
-3. ML scoring: the trained model, loaded from model.pkl, returns a risk score and a decision. Before the model existed we used a rule-based placeholder scorer, which also serves as our baseline on the results slide. Say which model type you trained and why.
-4. Explanation: the biggest risk factors become sentences a customer understands.
-5. Human confirm: low-risk payments show “Sent”; high-risk ones show the pause screen and the customer confirms or cancels.
+1. The payment form, served by our FastAPI app on port 8000, posts the payment to `POST /assess`.
+2. We turn the payment into ten signals, including the amount compared with the customer’s usual payment, whether the payee is new and how long ago it was added, the hour, a device change, hesitation time, pasted payee details and whether they’re on a call.
+3. A scikit-learn gradient boosting model gives a scam probability, and transparent rules add points for known red flags. They are blended 70% model, 30% rules, and a large payment made during a call always scores at least 70.
+4. The rules that fired, ranked by the model’s feature importance, become up to three plain-English reasons.
+5. A score under 55 is approved; 55 or more pauses the payment and the customer confirms or cancels.
 
-Every request, score, reason and decision is stored in SQLite and visible through GET /audit and the audit log view. Everything runs on our LinuxONE VM.
+Every assessment and the customer’s final choice are stored in SQLite and shown on the audit page.
 
 Judging angle: technical design with LinuxONE and AI. About 45 seconds.
 
@@ -130,18 +134,18 @@ Judging angle: technical design with LinuxONE and AI. About 45 seconds.
 
 **Why this belongs on LinuxONE**
 
-- **Built and run on LinuxONE:** model trained and the FastAPI app served on our LinuxONE VM (s390x), with Python, [scikit-learn] and SQLite.
-- **AI inference in the transaction path:** scoring happens inside the payment request. In production it can use the on-chip Integrated Accelerator for AI.
-- **Payment data stays put:** banks can score payments where the data already lives, under IBM Z’s pervasive encryption.
-- **Built for transaction volume:** the platform banks already run high-volume, always-on payment workloads on.
+- **Built and run on LinuxONE:** model trained and the FastAPI app served on our IBM LinuxONE server (s390x), with Python, scikit-learn and SQLite.
+- **Scoring inside the payment:** every payment is scored within the request, before the money leaves, not in a batch afterwards.
+- **Data stays on the platform:** training data, model and audit log never leave the LinuxONE server.
+- **Where payments already run:** many banks run core payments on IBM Z, so scoring next to the transaction data is the realistic path.
 
 **Speaker notes**
 
-Lead with proof, then the production argument.
+Lead with proof: everything was built and run on our LinuxONE server. Point to the evidence: the SSH session, `uname -m` showing s390x, the training output and `results.json`, the app running on port 8000.
 
-Proof first: everything was built and run on our LinuxONE VM. Point to the evidence screenshots: the SSH session, uname -a showing s390x, model training output, evaluation metrics, the app running and its resource use.
+Then why it fits: scam prevention has to happen inside the payment, so the scoring has to sit next to the payment system, and many banks already process core payments on IBM Z.
 
-Then the production story: scam prevention has to happen inside the payment, before the money leaves. LinuxONE’s Telum processors include an on-chip AI accelerator designed for in-transaction inference. Be honest that in the datathon we ran the model on [CPU on the VM], and that the accelerator is the path to production scale.
+Be precise: we ran the model on the server’s CPUs. The on-chip AI accelerator, Secure Execution and crypto cards are next steps for production, not things we used today.
 
 Judging angle: technical design with LinuxONE and AI. About 40 seconds.
 
@@ -149,27 +153,27 @@ Judging angle: technical design with LinuxONE and AI. About 40 seconds.
 
 ## 7. Results
 
-**What the prototype achieved**
+**What the prototype achieved** (synthetic data)
 
-- **[__] ms** p99 scoring time per payment
-- **[__]%** of scam payments caught (recall)
-- **[__]%** of genuine payments flagged (false positives)
-- **[__] MB** memory used by the running app on LinuxONE
+- **97%** of scam payments caught (recall 0.97)
+- **92.4%** of flagged payments were real scams (precision 0.9238)
+- **0.972** macro-F1 across scam and genuine payments (0.9723)
+- **50,000** synthetic payments, 3% scams, to train and test
 
-Against our rule-based placeholder scorer: **[__]% more scams caught** at the same false-positive rate.
+**Synthetic data only.** These numbers show the pipeline works end to end, not real-world accuracy.
 
-Tested on [dataset name] · [__] transactions, [__]% labelled as scams · LinuxONE VM [cores / memory]
+10,000 held-out synthetic test payments · scikit-learn gradient boosting, threshold 0.45 · from `results.json`
 
 **Speaker notes**
 
-Lead with the number you’re proudest of, then give context.
+Every number comes straight from `results.json`, measured on synthetic data.
 
-- Latency: the customer is waiting on the Send button. Quote p99, not the average. Time a batch of requests to POST /score on the VM.
-- Recall: share of scam payments caught on the held-out test set.
-- False positives: share of genuine payments that were paused. Banks care most about this one.
-- Memory: from the resource-use screenshot on the VM.
+- Recall: of the scam payments in the held-out synthetic test set, the model caught 97 in every 100.
+- Precision: of the payments it flagged, 92 in every 100 were real scams, so genuine customers rarely get paused.
+- Macro-F1: one score balancing performance on scams and genuine payments.
+- 50,000 synthetic payments with a 3% scam rate, generated with a fixed seed; 10,000 held back for testing.
 
-Every number should match a screenshot in the evidence checklist. For the baseline, run the same test set through the rule-based placeholder scorer and compare. If the data is synthetic, say so and explain how scams were labelled.
+Say the honest part out loud: the data is synthetic and the scam patterns are our assumptions, so these numbers prove the system works end to end, not how it would perform on a real bank’s payments.
 
 Judging angle: execution. About 40 seconds.
 
@@ -180,23 +184,24 @@ Judging angle: execution. About 40 seconds.
 **Fewer victims, and a clear path to a pilot**
 
 Impact
-- [__] scams stopped per [100,000] payments in our test
-- An estimated [£__] in losses prevented at a mid-sized bank’s volume
+- 97 in every 100 scam payments paused in our synthetic test
+- About 92 in every 100 paused payments were real scams, so genuine customers rarely wait
 - Warnings that teach customers to spot the next scam
 
 Next steps
-- Test on real, anonymised payment data with a [bank or fintech partner]
+- Test on real, anonymised payment data with a bank or fintech partner
 - Retrain on confirm and cancel choices from the audit log
-- Run on the Integrated Accelerator for AI at production volume
+- Run inference on IBM Z’s on-chip AI accelerator at production volume
 
-Thank you · Databaes · [repo link]
+Thank you · Payment Shield by Team Databaes
+github.com/36taransingh5-dotcom/ibm-z-datathon-2026-databaes · SSF2026
 
 **Speaker notes**
 
-Turn your results into one human number, for example “at our recall, a bank processing [__] payments a day would stop about [__] scams a day.” Don’t inflate it.
+Close on people, then on what happens next. In our synthetic test, the model paused 97 in every 100 scam payments, and about 92 in every 100 paused payments were real scams. Say clearly that this is synthetic data.
 
-Next steps, in order of how soon they could happen: validate on real anonymised data with a partner; close the loop by using every confirm and cancel in the audit log as a training label; benchmark on LinuxONE’s AI accelerator at production volume.
+Next steps, in order: validate on real anonymised data with a partner; use every confirm and cancel in the audit log as a training label; move inference onto IBM Z’s on-chip AI accelerator for production volume.
 
-End with: “[Project name] stops the payment before the scammer gets the money. Thank you.” Then open for questions.
+End with: “Payment Shield stops the payment before the scammer gets the money. Thank you.” Then open for questions.
 
-Total talk: roughly 5 to 6 minutes including the demo; trim to the datathon’s time limit [check the submission rules].
+Judging angle: community value, plus execution and pitch. About 30 seconds.
