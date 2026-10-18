@@ -8,16 +8,21 @@ import time
 from pathlib import Path
 
 import joblib
+import matplotlib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
 ARTIFACT_DIR = ROOT / "artifacts"
+EVIDENCE_DIR = ROOT / "evidence"
 
 FEATURES = [
     "amount",
@@ -31,6 +36,118 @@ FEATURES = [
     "usual_amount",
     "amount_ratio",
 ]
+
+
+def rules_only_predictions(frame: pd.DataFrame, threshold: int = 55) -> np.ndarray:
+    """Apply the app's transparent point rules without using model output."""
+    score = np.zeros(len(frame), dtype=int)
+    new_recent = (frame["new_payee"] == 1) & (frame["payee_age_hours"] < 24)
+    amount_on_call = (frame["amount_ratio"] >= 3) & (frame["on_call"] == 1)
+    score += np.where(new_recent, 18, 0)
+    score += np.where(amount_on_call, 60, 0)
+
+    without_interaction = ~amount_on_call
+    score += np.where(without_interaction & (frame["amount_ratio"] >= 3), 24, 0)
+    score += np.where(
+        without_interaction
+        & (frame["amount_ratio"] >= 1.75)
+        & (frame["amount_ratio"] < 3),
+        13,
+        0,
+    )
+    score += np.where(without_interaction & (frame["on_call"] == 1), 20, 0)
+    score += np.where(frame["pasted_payee"] == 1, 11, 0)
+    score += np.where(frame["device_change"] == 1, 13, 0)
+    score += np.where(frame["typing_time_seconds"] >= 30, 8, 0)
+    score += np.where((frame["hour"] <= 3) | (frame["hour"] >= 22), 6, 0)
+    return (np.minimum(score, 100) >= threshold).astype(int)
+
+
+def classification_metrics(y_true: pd.Series, predictions: np.ndarray) -> dict:
+    return {
+        "precision": round(float(precision_score(y_true, predictions)), 4),
+        "recall": round(float(recall_score(y_true, predictions)), 4),
+        "f1": round(float(f1_score(y_true, predictions)), 4),
+        "macro_f1": round(float(f1_score(y_true, predictions, average="macro")), 4),
+    }
+
+
+def measure_single_decision_latency(
+    model: GradientBoostingClassifier, x_test: pd.DataFrame, samples: int = 2_000
+) -> dict:
+    """Measure individual predict_proba calls and return milliseconds."""
+    rows = [x_test.iloc[[index]] for index in range(min(samples, len(x_test)))]
+    for row in rows[:100]:
+        model.predict_proba(row)
+
+    latencies_ms = []
+    for row in rows:
+        started_ns = time.perf_counter_ns()
+        model.predict_proba(row)
+        latencies_ms.append((time.perf_counter_ns() - started_ns) / 1_000_000)
+
+    return {
+        "median": round(float(np.median(latencies_ms)), 4),
+        "p99": round(float(np.percentile(latencies_ms, 99)), 4),
+        "unit": "milliseconds",
+        "samples": len(latencies_ms),
+        "measurement": "single-row model.predict_proba calls on LinuxONE",
+    }
+
+
+def save_evidence(
+    y_test: pd.Series,
+    predictions: np.ndarray,
+    feature_importances: dict[str, float],
+) -> list[list[int]]:
+    EVIDENCE_DIR.mkdir(exist_ok=True)
+    matrix = confusion_matrix(y_test, predictions, labels=[0, 1])
+
+    fig, axis = plt.subplots(figsize=(6.4, 5.4))
+    image = axis.imshow(matrix, cmap="Blues")
+    fig.colorbar(image, ax=axis, fraction=0.046, pad=0.04)
+    axis.set(
+        xticks=[0, 1],
+        yticks=[0, 1],
+        xticklabels=["Legit", "Scam"],
+        yticklabels=["Legit", "Scam"],
+        xlabel="Predicted label",
+        ylabel="Actual label",
+        title="Gradient boosting confusion matrix\nSynthetic test set (10,000 payments)",
+    )
+    cutoff = matrix.max() / 2
+    for row in range(2):
+        for column in range(2):
+            axis.text(
+                column,
+                row,
+                f"{matrix[row, column]:,}",
+                ha="center",
+                va="center",
+                color="white" if matrix[row, column] > cutoff else "#0F172A",
+                fontsize=13,
+                fontweight="bold",
+            )
+    fig.tight_layout()
+    fig.savefig(EVIDENCE_DIR / "confusion_matrix.png", dpi=180, bbox_inches="tight")
+    plt.close(fig)
+
+    ordered = sorted(feature_importances.items(), key=lambda item: item[1])
+    labels = [name.replace("_", " ") for name, _ in ordered]
+    values = [value for _, value in ordered]
+    fig, axis = plt.subplots(figsize=(8, 5.8))
+    axis.barh(labels, values, color="#0F62FE")
+    axis.set(
+        xlabel="Relative importance",
+        title="Gradient boosting feature importance\nTrained on synthetic payment data",
+    )
+    axis.spines[["top", "right"]].set_visible(False)
+    axis.grid(axis="x", alpha=0.2)
+    axis.set_axisbelow(True)
+    fig.tight_layout()
+    fig.savefig(EVIDENCE_DIR / "feature_importance.png", dpi=180, bbox_inches="tight")
+    plt.close(fig)
+    return matrix.astype(int).tolist()
 
 
 def generate_dataset(rows: int = 50_000, seed: int = 2026) -> pd.DataFrame:
@@ -116,13 +233,10 @@ def train(frame: pd.DataFrame, seed: int = 2026) -> tuple[dict, dict]:
     threshold = 0.45
     probability = model.predict_proba(x_test)[:, 1]
     predictions = (probability >= threshold).astype(int)
-
-    sample = x_test.iloc[: min(1_000, len(x_test))]
-    timings = []
-    for _ in range(20):
-        started = time.perf_counter()
-        model.predict_proba(sample)
-        timings.append((time.perf_counter() - started) * 1_000 / len(sample))
+    rules_threshold = 55
+    rules_predictions = rules_only_predictions(x_test, rules_threshold)
+    feature_importances = dict(zip(FEATURES, model.feature_importances_.tolist()))
+    matrix = save_evidence(y_test, predictions, feature_importances)
 
     results = {
         "dataset": {
@@ -134,16 +248,24 @@ def train(frame: pd.DataFrame, seed: int = 2026) -> tuple[dict, dict]:
         "model": "sklearn.ensemble.GradientBoostingClassifier",
         "decision_threshold": threshold,
         "test_rows": int(len(y_test)),
-        "precision": round(float(precision_score(y_test, predictions)), 4),
-        "recall": round(float(recall_score(y_test, predictions)), 4),
-        "macro_f1": round(float(f1_score(y_test, predictions, average="macro")), 4),
-        "milliseconds_per_decision": round(float(np.median(timings)), 4),
+        "metrics": {
+            "gradient_boosting_model": classification_metrics(y_test, predictions),
+            "rules_only_baseline": {
+                "decision_threshold": rules_threshold,
+                **classification_metrics(y_test, rules_predictions),
+            },
+        },
+        "milliseconds_per_decision": measure_single_decision_latency(model, x_test),
+        "confusion_matrix": {
+            "labels": ["legit", "scam"],
+            "values": matrix,
+        },
     }
     bundle = {
         "model": model,
         "features": FEATURES,
         "threshold": threshold,
-        "feature_importances": dict(zip(FEATURES, model.feature_importances_.tolist())),
+        "feature_importances": feature_importances,
     }
     return bundle, results
 

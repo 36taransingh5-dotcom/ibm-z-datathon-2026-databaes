@@ -25,9 +25,26 @@ flowchart LR
 - `generate_and_train.py` creates 50,000 synthetic payment records and trains the model.
 - `data/payments.csv` is the generated, labelled dataset.
 - `artifacts/payment_scam_model.joblib` is the trained scikit-learn model bundle.
-- `results.json` contains precision, recall, macro-F1 and median milliseconds per decision.
+- `results.json` contains the model and rules-only metrics, confusion counts, and measured single-decision latency.
 - `risk_engine.py` combines the model probability with explainable rules.
 - `app.py` serves the payment flow and audit log on port 8000.
+
+## Evaluation results (synthetic data)
+
+Both approaches were evaluated on the same deterministic, stratified 10,000-payment test split. F1 is for the scam class.
+
+| Approach | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: |
+| Gradient boosting model | 0.9238 | 0.9700 | 0.9463 |
+| Rules-only baseline | 0.9819 | 0.7233 | 0.8330 |
+
+On the LinuxONE server, 2,000 warmed single-payment `predict_proba` calls had a median latency of **0.4597 ms** and p99 latency of **0.6092 ms** per decision. This measures individual model calls in milliseconds rather than dividing a batch duration by its row count.
+
+The model confusion matrix contains 9,676 true negatives, 24 false positives, 9 false negatives and 291 true positives.
+
+![Confusion matrix on the synthetic test set](evidence/confusion_matrix.png)
+
+![Gradient boosting feature importance on synthetic data](evidence/feature_importance.png)
 
 ## Run on LinuxONE
 
