@@ -59,4 +59,32 @@ td { padding:16px; border-top:1px solid var(--line); vertical-align:top; } td sm
 .pill { display:inline-block; padding:5px 9px; border-radius:99px; background:#e8eef5; font-weight:700; text-transform:capitalize; }
 .pill.approved,.pill.confirmed { color:#067647; background:#dcfae6; } .pill.paused { color:#9a6700; background:#fff0c2; } .pill.cancelled { color:#b42318; background:#fee4e2; }
 .empty { padding:48px; text-align:center; color:var(--muted); }
+/* Paused-payment screen ---------------------------------------------- */
+.review { text-align:left; }
+.review .status-icon,.review .eyebrow,.review h1 { text-align:center; }
+.review-lede { font-size:18px; line-height:1.55; color:#364152; text-align:center; margin:0 0 26px; }
+.review-lede strong { color:var(--ink); white-space:nowrap; }
+.risk-block { margin:0 0 28px; }
+.risk-block .risk-row { margin:0 0 8px; font-weight:650; }
+.risk-score { font-size:19px; color:var(--ink); font-variant-numeric:tabular-nums; }
+.risk-score span { font-size:13px; font-weight:650; color:var(--muted); }
+.reasons { border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:0 0 22px; background:#fcfdff; }
+.reasons h2 { font-size:12px; letter-spacing:.09em; text-transform:uppercase; color:#526174; margin:0 0 12px; }
+.reasons ul { list-style:none; margin:0; padding:0; display:grid; gap:11px; }
+.reasons li { display:grid; grid-template-columns:20px 1fr; gap:11px; align-items:start; font-size:15px; line-height:1.5; color:#27364a; }
+.reasons li::before { content:"!"; display:grid; place-items:center; width:20px; height:20px; margin-top:1px; border-radius:50%; background:#fff0c2; color:#9a6700; font-size:12px; font-weight:850; }
+.reasons li span::first-letter { text-transform:uppercase; }
+.reasons .reason { margin:0; font-size:15px; }
+.review .guidance { text-align:left; }
+.review .guidance strong { display:block; margin-bottom:5px; color:#5a3d00; }
+.ref { margin:18px 0 0; text-align:center; color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+
+/* Decision buttons: the safe choice carries the visual weight ---------- */
+.actions.stacked { flex-direction:column; gap:10px; margin-top:4px; }
+.actions.stacked .button { width:100%; }
+.button.safe { background:var(--blue); color:white; }
+.button.risky { border:1px solid #cbd5e1; background:white; color:#526174; font-weight:650; }
+.button.risky:hover { border-color:#94a3b8; color:var(--ink); }
+.button:focus-visible { outline:3px solid #dbeafe; outline-offset:2px; }
+
 @media (max-width:700px) { nav { gap:12px; } .grid.two,.checks { grid-template-columns:1fr; } .form-card,.decision { padding:24px; } dl { grid-template-columns:1fr; } dl div { border-right:0; border-bottom:1px solid var(--line); } .page-heading { align-items:start; gap:20px; flex-direction:column; } .actions { flex-direction:column; } }

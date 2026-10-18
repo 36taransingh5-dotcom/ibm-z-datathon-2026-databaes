@@ -79,7 +79,8 @@ def test_payment_flow_and_audit_page():
         high = client.post("/assess", data={"payee": "Unknown caller", **high_risk_payment()})
         assert high.status_code == 200
         assert "PAYMENT PAUSED" in high.text
-        assert "Cancel payment" in high.text
+        assert "Cancel this payment" in high.text
+        assert "Confirm and send anyway" in high.text
 
         match = re.search(r'action="/decision/([a-f0-9]+)"', high.text)
         assert match
