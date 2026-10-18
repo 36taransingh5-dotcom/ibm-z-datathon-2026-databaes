@@ -69,6 +69,8 @@ Why pause instead of block: blocking annoys genuine customers, and scam victims 
 
 The audit log matters for banks and regulators: every score, every reason shown and every confirm or cancel is recorded, so decisions can be reviewed and the data can later improve the model.
 
+If the judges push on what is new: banks already show generic scam warnings that customers click through. We score behavioural signals - being on a call, pasted payee details, hesitation, a payee added minutes ago - inside the payment path, in under a millisecond per decision (median 0.46 ms, measured on our LinuxONE server), so the check happens before the money moves. We pause and explain rather than block, the customer decides, and the audit log records everything. That is a targeted intervention at the moment the scam is happening, not another warning banner. All results are on synthetic data.
+
 Judging angle: novelty. About 40 seconds.
 
 ---
@@ -234,3 +236,4 @@ The confusion matrix: 9,676 genuine payments correctly approved, 24 genuine paym
 Feature importance: the model leans most on how recently the payee was added, whether the customer is on a phone call, how long they hesitated while typing, and how the amount compares with their usual payment. That matches how real APP scams work: a scammer on the phone talking someone into paying a brand-new payee. Raw amount on its own barely matters, which is why a big but normal payment doesn’t get paused.
 
 These come from synthetic data, so they reflect the patterns we built in, not a real bank’s data.
+
