@@ -29,6 +29,10 @@ flowchart LR
 - `risk_engine.py` combines the model probability with explainable rules.
 - `app.py` serves the payment flow and audit log on port 8000.
 
+## What is new
+
+Banks already show generic scam warnings that most customers click through. Payment Shield is different: it scores behavioural signals - whether the customer is on a phone call, whether the payee details were pasted, hesitation while typing and how recently a new payee was added - inside the payment path, before the money moves. Each decision takes under a millisecond on our LinuxONE server (median 0.46 ms), so the check fits inside a real payment flow. Instead of blocking, it pauses, explains the specific reasons in plain English and lets the customer confirm or cancel, and every score, reason and choice is written to an audit log. It is a targeted intervention at the moment a scam is actually happening, not a static warning banner. All evaluation is on synthetic data (see below).
+
 ## Evaluation results (synthetic data)
 
 Both approaches were evaluated on the same deterministic, stratified 10,000-payment test split. F1 is for the scam class.
@@ -73,6 +77,22 @@ All payment records are **synthetic and clearly labelled**. No customer, banking
 
 The final risk score blends the model probability with additive safety rules. When a payment is paused, the explanation is assembled from the highest-importance model features whose safety rules fired. The audit database records the score, reason and final user choice.
 
+## Open source used
+
+- [Python](https://www.python.org/)
+- [scikit-learn](https://scikit-learn.org/) - gradient boosting model
+- [pandas](https://pandas.pydata.org/)
+- [NumPy](https://numpy.org/)
+- [joblib](https://joblib.readthedocs.io/)
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Uvicorn](https://www.uvicorn.org/)
+- [Jinja](https://jinja.palletsprojects.com/)
+- [python-multipart](https://github.com/Kludex/python-multipart)
+- [SQLite](https://www.sqlite.org/) - audit log
+- [HTTPX](https://www.python-httpx.org/) and [pytest](https://docs.pytest.org/) - tests
+- [Mermaid](https://mermaid.js.org/) - diagrams
+
 ## AI tools used
 
 This project was developed with AI-assisted coding using **Codex / Claude Code**. All generated code, data assumptions and model results should be reviewed by humans before reuse.
+
