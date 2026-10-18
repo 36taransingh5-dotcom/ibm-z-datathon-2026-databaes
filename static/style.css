@@ -87,4 +87,55 @@ td { padding:16px; border-top:1px solid var(--line); vertical-align:top; } td sm
 .button.risky:hover { border-color:#94a3b8; color:var(--ink); }
 .button:focus-visible { outline:3px solid #dbeafe; outline-offset:2px; }
 
-@media (max-width:700px) { nav { gap:12px; } .grid.two,.checks { grid-template-columns:1fr; } .form-card,.decision { padding:24px; } dl { grid-template-columns:1fr; } dl div { border-right:0; border-bottom:1px solid var(--line); } .page-heading { align-items:start; gap:20px; flex-direction:column; } .actions { flex-direction:column; } }
+/* Responsive ----------------------------------------------------------- */
+@media (max-width:700px) {
+  nav { gap:12px; }
+  .grid.two,.checks { grid-template-columns:1fr; }
+  .form-card,.decision { padding:24px; }
+  dl { grid-template-columns:1fr; }
+  dl div { border-right:0; border-bottom:1px solid var(--line); }
+  dl div:last-child { border-bottom:0; }
+  .page-heading { align-items:start; gap:20px; flex-direction:column; }
+  .actions { flex-direction:column; }
+  .actions .button { width:100%; }
+  .decision { margin:24px auto; }
+  main { padding:18px 16px 48px; }
+}
+/* Below 700px the table becomes one card per decision: a phone cannot show
+   six columns, and risk/status are the two that matter most. */
+@media (max-width:700px) {
+  .table-wrap { overflow-x:visible; }
+  table,tbody,tr,td { display:block; width:100%; }
+  thead { display:none; }
+  tr { padding:16px; border-top:1px solid var(--line); }
+  tbody tr:first-child { border-top:0; }
+  td { padding:5px 0; border:0; display:grid; grid-template-columns:84px 1fr; gap:12px; align-items:start; }
+  td::before { content:attr(data-label); padding-top:2px; color:var(--muted); font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  td small { margin-top:2px; }
+  /* Keep secondary text and pills in the value column, sized to content. */
+  td > small { grid-column:2; }
+  td .risk,td .pill { justify-self:start; }
+  .reason-cell { min-width:0; }
+  .empty { display:block; padding:40px 0; }
+  .empty::before { content:none; }
+}
+@media (max-width:480px) {
+  header { height:auto; min-height:60px; padding:10px 16px; gap:10px; }
+  .brand { font-size:16px; gap:9px; }
+  .brand-mark { width:30px; height:30px; font-size:12px; }
+  nav { gap:14px; font-size:13px; }
+  .hero h1,.decision h1,.page-heading h1 { font-size:26px; }
+  .hero p,.page-heading p { font-size:15px; }
+  .demo-label { font-size:11px; margin-bottom:20px; }
+  .form-card,.decision { padding:20px 17px; border-radius:14px; }
+  .review-lede { font-size:16px; }
+  .review-lede strong { white-space:normal; }
+  .reasons { padding:15px 16px; }
+  .reasons li { font-size:14px; }
+  .button { padding:14px 18px; }
+  .guidance { font-size:12.5px; }
+  .section-title { gap:11px; }
+  .section-title>span { flex-basis:30px; height:30px; }
+  /* Tap targets stay comfortable on a phone. */
+  .checks label { padding:15px 13px; }
+}
