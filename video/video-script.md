@@ -19,17 +19,15 @@ Narration is paced at about 150 words per minute. Read it aloud with a stopwatch
 **Placeholders to fill before recording:**
 
 - [TEAM NAME]
-- [SCAM LOSS STAT]: a recent UK authorised push payment (APP) scam loss figure, with its source shown on screen (for example, the UK Finance annual fraud report)
 - [PRECISION], [RECALL], [MACRO-F1] and [MS PER DECISION] from results.json, measured on the LinuxONE VM
-- [MS]: the scoring time shown in the app during the demo
 
 ## Script
 
 ### Beat 1: Problem (0:00–0:20)
 
-**Narration:** "Last year, people in the UK lost [SCAM LOSS STAT] to payment scams. The scammer doesn't hack the bank. They phone you, pretending to be your bank, the police or a family member, and talk you into sending the money yourself. Once it's sent, it's usually gone."
+**Narration:** "In 2025, people in the UK lost £576.4 million to authorised push payment scams, across 248,070 cases. The scammer doesn't hack the bank. They phone you, pretending to be your bank or the police, and talk you into sending the money yourself. Scams that start with a call or text are 17% of cases, but 28% of the money lost."
 
-**On screen:** Black background, the stat in large text with its source underneath. Then a phone showing an incoming call labelled "Bank Fraud Team".
+**On screen:** Black background, "£576.4m" in large text with "248,070 cases in 2025" underneath and the source: UK Finance, Annual Fraud Report 2026. Then a phone showing an incoming call labelled "Bank Fraud Team", with "17% of cases · 28% of losses" beside it.
 
 ### Beat 2: Solution (0:20–0:40)
 
@@ -41,9 +39,9 @@ Narration is paced at about 150 words per minute. Read it aloud with a stopwatch
 
 **Scene A, legit payment (0:40–1:05)**
 
-**Narration:** "This is Priya paying her landlord £650 rent, like every month. Known payee, usual amount, nothing unusual. Scored in [MS] milliseconds. Low risk, so it goes straight through. No friction for real payments."
+**Narration:** "This is Priya paying her landlord £650 rent, like every month. Known payee, usual amount, nothing unusual. Low risk, so it goes straight through. No friction for real payments."
 
-**On screen:** Payment form filled with £650 and a saved payee. Click Send. The "Sent" screen appears with the scoring time visible.
+**On screen:** Payment form filled with £650 and a saved payee. Click Review payment. The "Payment approved" screen appears.
 
 **Scene B, scam payment (1:05–1:50)**
 
@@ -73,11 +71,11 @@ Narration is paced at about 150 words per minute. Read it aloud with a stopwatch
 
 | # | Time | Shot | Must be on screen | Source |
 | --- | --- | --- | --- | --- |
-| 1 | 0:00–0:12 | Stat card | Scam loss figure + source name | Slide or title card |
-| 2 | 0:12–0:20 | Incoming call | Phone screen, caller "Bank Fraud Team" | Mock-up or real phone |
+| 1 | 0:00–0:12 | Stat card | £576.4m, 248,070 cases, source: UK Finance Annual Fraud Report 2026 | Slide or title card |
+| 2 | 0:12–0:20 | Incoming call | Phone screen, caller "Bank Fraud Team", "17% of cases · 28% of losses" | Mock-up or real phone |
 | 3 | 0:20–0:40 | Solution flow | Payment → score → Sent or Pause → Confirm/Cancel | Person 4's diagram, simplified |
 | 4 | 0:40–0:52 | Legit payment form | £650, saved payee, Send button | Frontend screen recording |
-| 5 | 0:52–1:05 | Sent screen | "Sent" + scoring time in ms | Frontend screen recording |
+| 5 | 0:52–1:05 | Approved screen | "Payment approved" confirmation | Frontend screen recording |
 | 6 | 1:05–1:25 | Scam payment form | £2,400, new payee on, pasted payee, on-call on | Frontend screen recording |
 | 7 | 1:25–1:42 | Pause screen | Risk reasons readable (zoomed), Confirm and Cancel | Frontend screen recording |
 | 8 | 1:42–1:50 | Cancelled | "Payment cancelled" confirmation | Frontend screen recording |
