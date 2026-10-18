@@ -1,22 +1,49 @@
 {% extends "base.html" %}
 {% block title %}Payment paused · Payment Shield{% endblock %}
 {% block content %}
-<section class="card decision warning">
+<section class="card decision warning review">
   <div class="status-icon">!</div>
   <p class="eyebrow">PAYMENT PAUSED</p>
   <h1>Take a moment before you pay.</h1>
-  <p class="reason">{{ assessment.reason }}</p>
-  <div class="risk-meter"><div style="width: {{ assessment.risk_score }}%"></div></div>
-  <div class="risk-row"><span>Risk score</span><strong>{{ assessment.risk_score }}/100</strong></div>
-  <dl>
-    <div><dt>Recipient</dt><dd>{{ payee }}</dd></div>
-    <div><dt>Amount</dt><dd>£{{ "%.2f"|format(payment.amount) }}</dd></div>
-    <div><dt>Reference</dt><dd>{{ entry_id }}</dd></div>
-  </dl>
-  <p class="guidance">If anyone told you to ignore a warning or move money to a “safe account”, cancel and contact your bank using a trusted number.</p>
-  <form class="actions" method="post" action="/decision/{{ entry_id }}">
-    <button class="button danger" name="action" value="cancel">Cancel payment</button>
-    <button class="button ghost" name="action" value="confirm">I understand, confirm</button>
+
+  <p class="review-lede">
+    You are about to send <strong>£{{ "{:,.2f}".format(payment.amount) }}</strong>
+    to <strong>{{ payee }}</strong>.
+  </p>
+
+  <div class="risk-block">
+    <div class="risk-row">
+      <span>Risk score</span>
+      <strong class="risk-score">{{ assessment.risk_score }}<span>/100</span></strong>
+    </div>
+    <div class="risk-meter"><div style="width: {{ assessment.risk_score }}%"></div></div>
+  </div>
+
+  <div class="reasons">
+    <h2>Why we paused this</h2>
+    {% if assessment.top_reasons %}
+    <ul>
+      {% for item in assessment.top_reasons %}
+      <li><span>{{ item }}</span></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="reason">{{ assessment.reason }}</p>
+    {% endif %}
+  </div>
+
+  <p class="guidance">
+    <strong>If someone is pressuring you, this is the moment to stop.</strong>
+    No bank, police force or government body will ever ask you to move money to a
+    “safe account”. If anyone told you to ignore a warning like this one, cancel
+    the payment and call your bank on the number printed on your card.
+  </p>
+
+  <form class="actions stacked" method="post" action="/decision/{{ entry_id }}">
+    <button class="button safe" name="action" value="cancel">Cancel this payment</button>
+    <button class="button risky" name="action" value="confirm">Confirm and send anyway</button>
   </form>
+
+  <p class="ref">Reference {{ entry_id }}</p>
 </section>
 {% endblock %}
