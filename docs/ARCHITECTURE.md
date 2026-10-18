@@ -6,7 +6,7 @@ Event code: **SSF2026** · IBM Z Datathon 2026
 
 ## Problem
 
-In an authorised push payment (APP) scam, the victim is tricked, often by a phone call from someone posing as their bank or the police, into sending money themselves. The bank sees a correctly authenticated, "valid" payment, and instant payments settle in seconds. So the check has to happen in real time, before the money moves. UK losses: [SOURCE NEEDED].
+In an authorised push payment (APP) scam, the victim is tricked, often by a phone call from someone posing as their bank or the police, into sending money themselves. The bank sees a correctly authenticated, "valid" payment, and instant payments settle in seconds. So the check has to happen in real time, before the money moves. UK losses: £576.4 million across 248,070 APP scam cases in 2025 (UK Finance, [Annual Fraud Report 2026](https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release)).
 
 ## Diagram
 
@@ -126,3 +126,4 @@ The dataset is 100% synthetic; no real customer data is used. The scam rate and 
 ## Tech stack
 
 [Python](https://www.python.org/), [scikit-learn](https://scikit-learn.org/), [pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/), [joblib](https://joblib.readthedocs.io/), [FastAPI](https://fastapi.tiangolo.com/), [Uvicorn](https://www.uvicorn.org/), [Jinja](https://jinja.palletsprojects.com/), [python-multipart](https://github.com/Kludex/python-multipart), [SQLite](https://www.sqlite.org/), [HTTPX](https://www.python-httpx.org/), [pytest](https://docs.pytest.org/), [Mermaid](https://mermaid.js.org/).
+
