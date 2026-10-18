@@ -43,6 +43,29 @@ def test_risk_engine_separates_obvious_cases():
     assert high["top_reasons"]
 
 
+def test_large_payment_on_call_is_high_risk_for_old_recipient():
+    old_recipient = low_risk_payment()
+    old_recipient.update(
+        {
+            "amount": 600,
+            "usual_amount": 100,
+            "on_call": True,
+            "new_payee": False,
+            "payee_age_hours": 8_760,
+        }
+    )
+    on_call = assess_payment(old_recipient)
+
+    old_recipient["on_call"] = False
+    not_on_call = assess_payment(old_recipient)
+
+    assert on_call["flagged"] is True
+    assert on_call["risk_score"] >= 70
+    assert on_call["risk_score"] > not_on_call["risk_score"]
+    assert "while someone is on the phone" in on_call["reason"]
+    assert "recipient was added" not in on_call["reason"]
+
+
 def test_payment_flow_and_audit_page():
     with TestClient(app) as client:
         health = client.get("/health")

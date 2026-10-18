@@ -47,14 +47,23 @@ def assess_payment(payment: dict) -> dict:
     def add(feature: str, points: int, reason: str) -> None:
         rules.append({"feature": feature, "points": points, "reason": reason})
 
+    large_amount_on_call = values["amount_ratio"] >= 3 and values["on_call"]
+
     if values["new_payee"] and values["payee_age_hours"] < 24:
         add("payee_age_hours", 18, "the recipient was added less than 24 hours ago")
-    if values["amount_ratio"] >= 3:
-        add("amount_ratio", 24, "the amount is over three times your usual payment")
-    elif values["amount_ratio"] >= 1.75:
-        add("amount_ratio", 13, "the amount is well above your usual payment")
-    if values["on_call"]:
-        add("on_call", 20, "you indicated that someone is currently on the phone with you")
+    if large_amount_on_call:
+        add(
+            "amount_ratio",
+            60,
+            "the amount is over three times your usual payment while someone is on the phone with you",
+        )
+    else:
+        if values["amount_ratio"] >= 3:
+            add("amount_ratio", 24, "the amount is over three times your usual payment")
+        elif values["amount_ratio"] >= 1.75:
+            add("amount_ratio", 13, "the amount is well above your usual payment")
+        if values["on_call"]:
+            add("on_call", 20, "you indicated that someone is currently on the phone with you")
     if values["pasted_payee"]:
         add("pasted_payee", 11, "the recipient details were pasted rather than typed")
     if values["device_change"]:
@@ -66,6 +75,10 @@ def assess_payment(payment: dict) -> dict:
 
     rule_score = min(100, sum(rule["points"] for rule in rules))
     score = round(min(100, (model_probability * 70) + (rule_score * 0.30)))
+    # A large, call-influenced transfer is a strong coercion pattern even when
+    # the recipient account itself is well established.
+    if large_amount_on_call:
+        score = max(score, 70)
     flagged = score >= 55
 
     importance = bundle["feature_importances"]
