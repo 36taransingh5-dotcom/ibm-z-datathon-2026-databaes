@@ -18,7 +18,7 @@ Narration is paced at about 150 words per minute. Read it aloud with a stopwatch
 
 **Placeholders to fill before recording:**
 
-- [TEAM NAME]
+- Databaes
 - [PRECISION], [RECALL], [MACRO-F1] and [MS PER DECISION] from results.json, measured on the LinuxONE VM
 
 ## Script
@@ -57,13 +57,13 @@ Narration is paced at about 150 words per minute. Read it aloud with a stopwatch
 
 ### Beat 4: LinuxONE and metrics (2:05–2:35)
 
-**Narration:** "Everything you've just seen runs on IBM LinuxONE. We trained a gradient boosting model on 50,000 synthetic payments. It catches [RECALL] of scams with [PRECISION] precision, and scores each payment in [MS PER DECISION] milliseconds, fast enough to sit inside a real payment flow."
+**Narration:** "Everything you've just seen runs on IBM LinuxONE. We trained a gradient boosting model on 50,000 synthetic payments. It catches [RECALL] of scams with [PRECISION] precision, fast enough to sit inside a real payment flow."
 
 **On screen:** Terminal with the SSH session to the LinuxONE VM, then `uname -m` showing s390x, the app running, training output, then results.json with the metrics highlighted. Small caption: "Synthetic dataset, clearly labelled."
 
 ### Beat 5: Impact (2:35–2:52)
 
-**Narration:** "Scams don't just take money. They take people's confidence. Our system steps in at the one moment a scam can still be stopped, without slowing down the payments that are real. [TEAM NAME], IBM Z Datathon 2026."
+**Narration:** "Scams don't just take money. They take people's confidence. Our system steps in at the one moment a scam can still be stopped, without slowing down the payments that are real. Databaes, IBM Z Datathon 2026."
 
 **On screen:** Priya's "Payment cancelled" screen fades to the end card: project name, team name, team members, GitHub link, event code SSF2026.
 
