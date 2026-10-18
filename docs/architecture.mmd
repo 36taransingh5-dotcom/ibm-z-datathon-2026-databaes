@@ -1,0 +1,58 @@
+flowchart LR
+    customer(["Customer"])
+
+    subgraph vm["IBM LinuxONE VM (s390x, Ubuntu, Python 3.12)"]
+        direction LR
+        ui["Banking UI<br/>(HTML templates)"]
+        api["FastAPI service<br/>port 8000"]
+        feat["Feature builder<br/>amount vs usual, new payee,<br/>payee age, hour, device change,<br/>hesitation, pasted payee, on call"]
+        rules["Rules engine<br/>additive red-flag points"]
+        model["ML model<br/>Gradient Boosting<br/>payment_scam_model.joblib"]
+        comb["Risk combiner<br/>score 0-100, pause at 55+"]
+        explain["Explanation generator<br/>top 3 fired rules,<br/>ranked by feature importance"]
+        sent["Payment approved"]
+        pause["Pause screen<br/>plain-English reasons"]
+        choice{"Confirm or Cancel?<br/>POST /decision/:id"}
+        confirmed["Payment confirmed"]
+        cancelled["Payment cancelled"]
+        audit[("Audit log<br/>SQLite data/audit.db")]
+        auditview["Audit view<br/>GET /audit"]
+    end
+
+    subgraph offline["Offline training: generate_and_train.py"]
+        direction LR
+        gen["Synthetic data generator<br/>50k rows, 3% scams, seed 2026"]
+        train["Training + evaluation<br/>80/20 stratified split"]
+        out["payment_scam_model.joblib<br/>+ results.json"]
+    end
+
+    customer --> ui
+    ui -->|"POST /assess"| api
+    api --> feat
+    feat --> rules
+    feat --> model
+    rules --> comb
+    model --> comb
+    comb --> explain
+    explain -->|"low risk"| sent
+    explain -->|"high risk"| pause
+    pause --> choice
+    choice -->|"Confirm"| confirmed
+    choice -->|"Cancel"| cancelled
+    sent -->|"approved"| audit
+    pause -->|"paused"| audit
+    choice -->|"status updated"| audit
+    audit --> auditview
+
+    gen --> train --> out
+    out -.->|"loaded by risk engine"| model
+
+    classDef ui fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef logic fill:#f1f5f9,stroke:#475569,color:#0f172a
+    classDef ml fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+    classDef store fill:#fef3c7,stroke:#d97706,color:#0f172a
+
+    class customer,ui,sent,pause,choice,confirmed,cancelled,auditview ui
+    class api,feat,rules,comb,explain logic
+    class model,gen,train,out ml
+    class audit store
